@@ -1,0 +1,36 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Esta es mi primera plantilla para implementar una instancia EC2"
+Resources:
+  EC2Instance: 
+    Type: "AWS::EC2::Instance"
+    Properties:
+      InstanceType: t2.micro 
+      ImageId: ami-0a1179631ec8933d7 #Esta es la AMI de: Amazon Linux 2 AMI (HVM) - Kernel 5.10, de la Region us-east-1
+      KeyName: borrar #Key Pair: uso para pruebas y supervisado
+
+# Comando para validar mi template
+  #aws cloudformation validate-template --template-body file://<Nombre_plantilla.yaml>
+  # "Como salida se tiene que observar que: "Parameters: []""
+
+#Comando para lanzar mi template
+  #aws cloudformation create-stack --stack-name <Nombre_stack> --template-body file://<Nombre_plantilla.yaml> 
+  # "Como salida se tiene que observar: StackId: arn:aws:cloudformation: <-- el ARN del Satck"
+
+# Comando para listar solo los nombres de los stacks en cloudformation
+  #aws cloudformation describe-stacks --query "Stacks[*].StackName" --output text
+
+# Comando para borrar una Stack
+  #aws cloudformation delete-stack --stack-name MiStack ("No recibes confirmación ")
+
+
+
+#$Host.Name ==> comando para cer en que tipo de terminal de windows estoy 
+  # "Me indica que estoy utilizando el símbolo del sistema estándar de Windows (cmd.exe)"
+
+
+#CONLUCIONES:
+#Puedo observar que la instancia se lanzo sin ningún nombre, Veré más adelante cómo asignarle un nombre por defecto
+#No me gusta que no reciba ninguna confirmacion de lo que se esta haciendo (A comparacion de Terraform)
+
+
