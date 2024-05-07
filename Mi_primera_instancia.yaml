@@ -25,7 +25,7 @@ Resources:
 
 
 
-#$Host.Name ==> comando para cer en que tipo de terminal de windows estoy 
+#$Host.Name ==> comando para ver en que tipo de terminal de windows estoy 
   # "Me indica que estoy utilizando el símbolo del sistema estándar de Windows (cmd.exe)"
 
 
