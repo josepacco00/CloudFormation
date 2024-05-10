@@ -1,0 +1,49 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Mi primera plantilla de Lambda"
+
+Resources:
+  MyLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Handler: lambda_function.lambda_handler
+      Role: arn:aws:iam::850652624001:role/service-role/new_function_EJM-role-9cmmf85e
+      Code:
+        ZipFile: |
+          import json
+
+          def lambda_handler(event, context):
+              # TODO implement
+              return {
+                  'statusCode': 200,
+                  'body': json.dumps('Prueba de funcionamiento de lambda')
+              }
+      Runtime: python3.8
+
+
+# Comando para validar mi template
+  #aws cloudformation validate-template --template-body file://<Nombre_plantilla.yaml>
+  # "Como salida se tiene que observar que: "Parameters: []""
+
+#Comando para lanzar mi template
+  #aws cloudformation create-stack --stack-name <Nombre_stack> --template-body file://<Nombre_plantilla.yaml> 
+  # "Como salida se tiene que observar: StackId: arn:aws:cloudformation: <-- el ARN del Satck"
+
+# Comando para listar solo los nombres de los stacks en cloudformation
+  #aws cloudformation describe-stacks --query "Stacks[*].StackName" --output text
+
+# Comando para borrar una Stack
+  # aws cloudformation delete-stack --stack-name <Nombre_stack> 
+  # ("No recibes confirmación ")
+
+#CONCLUSIONES:
+
+# Handler: Especifica la función dentro de tu código que Lambda debe ejecutar.
+  # En este caso, 
+  # archivo_python.lambda_handler --> hace referencia a la función lambda_handler en el archivo archivo_python.py.
+# ZipFile: --> es un de las formas de proporcionar el código de la funcion Lambda dentro del template de CloudFormation
+
+#Role: <-- estoy usando el rol de una funcion que cree con la consola
+
+# El nombre de la funcion se da de esta manera:
+  # <Nombre_del_stack><MyLambdaFunction><letras_al_azar>
