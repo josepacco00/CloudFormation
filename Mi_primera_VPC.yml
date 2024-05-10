@@ -1,0 +1,36 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Implementando mi primera VPC"
+
+Resources: 
+  MyVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 172.172.0.0/16
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: nombre
+          Value: VPC_de_prueba
+
+# Comando para validar mi template
+  #aws cloudformation validate-template --template-body file://<Nombre_plantilla.yaml>
+  # "Como salida se tiene que observar que: "Parameters: []""
+
+#Comando para lanzar mi template
+  #aws cloudformation create-stack --stack-name <Nombre_stack> --template-body file://<Nombre_plantilla.yaml> 
+  # "Como salida se tiene que observar: StackId: arn:aws:cloudformation: <-- el ARN del Satck"
+
+# Comando para listar solo los nombres de los stacks en cloudformation
+  #aws cloudformation describe-stacks --query "Stacks[*].StackName" --output text
+
+# Comando para borrar una Stack
+  #aws cloudformation delete-stack --stack-name <Nombre_stack> ("No recibes confirmación ")
+
+
+#CONLUCIONES:
+
+# para colocar un nombre a la VPC solo tengo que modificar el Tag
+
+        # - Key: Name                <-- con la Clave Name colocamos el nomebre a nuestra VPC 
+        #   Value: VPC_de_prueba2    <-- Este sera el nombre de la VPC
