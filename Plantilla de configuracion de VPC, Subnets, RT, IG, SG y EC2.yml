@@ -1,0 +1,131 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Plantilla para crear una VPC, Subnets, RT, IG, SG, y comprobar que la instancia EC2 se conecte a internet
+
+Resources:
+  MyVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: "192.0.0.0/16"
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: "MiVPC-CF"
+
+  PublicSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId:
+        Ref: MyVPC
+      CidrBlock: "192.0.0.0/24"
+      AvailabilityZone: "us-east-1a"
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: "Subnet-Public-1a-192.0.0.0/24"
+
+  PrivateSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId:
+        Ref: MyVPC
+      CidrBlock: "192.0.1.0/24"
+      AvailabilityZone: "us-east-1b"
+      Tags:
+        - Key: Name
+          Value: "Subnet-Private-1b-192.0.1.0/24"
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: "InternetGateway"
+
+  AttachGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId:
+        Ref: MyVPC
+      InternetGatewayId:
+        Ref: InternetGateway
+
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId:
+        Ref: MyVPC
+      Tags:
+        - Key: Name
+          Value: "PublicRouteTable"
+
+  PublicRoute:
+    Type: AWS::EC2::Route
+    DependsOn: AttachGateway
+    Properties:
+      RouteTableId:
+        Ref: PublicRouteTable
+      DestinationCidrBlock: "0.0.0.0/0"
+      GatewayId:
+        Ref: InternetGateway
+
+  PublicSubnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId:
+        Ref: PublicSubnet1
+      RouteTableId:
+        Ref: PublicRouteTable
+
+  PrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId:
+        Ref: MyVPC
+      Tags:
+        - Key: Name
+          Value: "PrivateRouteTable"
+
+  PrivateSubnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId:
+        Ref: PrivateSubnet1
+      RouteTableId:
+        Ref: PrivateRouteTable
+
+  MySecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: "Security Group for MyVPC"
+      VpcId:
+        Ref: MyVPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: '22'
+          ToPort: '22'
+          CidrIp: "0.0.0.0/0"
+
+  MyInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      ImageId: ami-00beae93a2d981137  # Reemplaza esto con una ID de AMI válida
+      SubnetId:
+        Ref: PublicSubnet1
+      SecurityGroupIds:
+        - Ref: MySecurityGroup
+      KeyName: Kp-edteam
+# Comando para validar mi template
+  #aws cloudformation validate-template --template-body file://<Nombre_plantilla.yml>
+  # "Como salida se tiene que observar que: "Parameters: []""
+# Comando para lanzar mi template
+  #aws cloudformation create-stack --stack-name <Nombre_stack> --template-body file://<Nombre_plantilla.yaml> 
+  # "Como salida se tiene que observar: StackId: arn:aws:cloudformation: <-- el ARN del Satck"
+# Comando para actualizar mi template
+  # aws cloudformation update-stack --stack-name MyStack --template-body file://<archive_name>.yml
+  # "Como salida se tiene que observar: StackId: arn:aws:cloudformation: <-- el ARN del Satck"
+# Comando para borrar una Stack
+  #aws cloudformation delete-stack --stack-name <Nombre_stack> ("No recibes confirmación ")
+          
